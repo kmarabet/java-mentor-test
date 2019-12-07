@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Main {
 
     //final static CharSequence[] opsList = {"+","-","*","/"};
-    final static int NUMBERS_IN_ONE_OPS = 2;
+    static final int NUMBERS_IN_ONE_OPS = 2;
 
     public static void main(String[] args) {
         // write your code here
@@ -33,18 +33,18 @@ public class Main {
 
     public static Number parseOperationString(String inputString){
 
-        Number result = null;
+        Number result = null; boolean arithmeticSignFound = false;
 
-        Operation[] opsList = Operation.values();
+        ArithmeticOperation[] opsList = ArithmeticOperation.values();
 
-        for (Operation ops: opsList){
+        for (ArithmeticOperation ops: opsList){
 
-            if (inputString.contains(ops.arithmeticSign)) {
-
+            if (inputString.contains(ops.sign)) {
+                arithmeticSignFound = true;
                 String[] rawOperands = inputString.split(ops.regExpSplitter);
 
                 if (rawOperands.length != NUMBERS_IN_ONE_OPS) {
-                    throw new RuntimeException("The calculator proceed not more than 2 numbers.");
+                    throw new RuntimeException("Only 2 numbers with one arithmetic sign between them (ex. 1 + 3) should be provided");
                 }
 
                 final Number operand1 = getNumberWithFormat(rawOperands[0]);
@@ -54,18 +54,21 @@ public class Main {
                     throw new RuntimeException("Numbers should be in the same format");
                 }
 
-                final Operation operation = Operation.byOpsSign(ops.arithmeticSign);
+                final ArithmeticOperation arithmeticOperation = ArithmeticOperation.byOpsSign(ops.sign);
 
-                final int opsResult = calculate(operand1.getValue(), operand2.getValue(), operation);
+                final int opsResult = calculate(operand1.getValue(), operand2.getValue(), arithmeticOperation);
 
                 result = new Number(opsResult, operand1.getNumberFormat());
                 break;
             }
         }
+        if (!arithmeticSignFound){
+            throw new RuntimeException("Arithmetic sign (+,-,* or /) should be provided");
+        }
         return result;
     }
 
-    private static int calculate(int operand1, int operand2, Operation ops) {
+    private static int calculate(int operand1, int operand2, ArithmeticOperation ops) {
 
         Integer result = null;
 
