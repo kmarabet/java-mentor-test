@@ -5,17 +5,17 @@ public enum Operation {
     //"+","-","*","/";
     ADD("+","\\+"), SUB("-", "-"), MULT("*","\\*"), DIV("/","/");
 
-    CharSequence opsSign;
+    CharSequence arithmeticSign;
     String regExpSplitter;
 
     Operation(CharSequence opsSign, String regExpSplitter) {
-        this.opsSign = opsSign;
+        this.arithmeticSign = opsSign;
         this.regExpSplitter = regExpSplitter;
     }
 
     static Operation byOpsSign(CharSequence opsSign){
         for (Operation ops: Operation.values()){
-            if (ops.opsSign == opsSign){
+            if (ops.arithmeticSign == opsSign){
                 return ops;
             }
         }

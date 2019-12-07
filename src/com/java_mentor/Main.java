@@ -8,22 +8,27 @@ public class Main {
     final static int NUMBERS_IN_ONE_OPS = 2;
 
     public static void main(String[] args) {
-	// write your code here
+        // write your code here
         Scanner scan = new Scanner(System.in);
         String continueResponse;
         String operation;
 
         Number calculationResult;
+        System.out.println("*** ПРОГРАММА КАЛЬКУЛЯТОР ***");
 
         do {
-            System.out.println("Введите операцию: (ex. 1 + 3)");
-            operation = scan.next();
+            System.out.println("Введите операцию: (ex. 1 + 3 or VI / III)");
+            operation = scan.nextLine();
             calculationResult = parseOperationString(operation);
-            System.out.println("Результат: " + calculationResult.getValue());
+            if (calculationResult.getNumberFormat() == NumberFormatType.ARAB){
+                System.out.println("Результат: " + calculationResult.getValue());
+            }else if (calculationResult.getNumberFormat() == NumberFormatType.ROMAN){
+                System.out.println("Результат: " + RomanToNumber.decimalToRoman(calculationResult.getValue()));
+            }
             System.out.println("Продолжить? (y/n)");
             continueResponse = scan.next();
+            scan.nextLine();
         } while(continueResponse.equals("y") || continueResponse.equals("Y"));
-
     }
 
     public static Number parseOperationString(String inputString){
@@ -34,22 +39,24 @@ public class Main {
 
         for (Operation ops: opsList){
 
-            if (inputString.contains(ops.opsSign)) {
+            if (inputString.contains(ops.arithmeticSign)) {
 
                 String[] rawOperands = inputString.split(ops.regExpSplitter);
 
-                if (rawOperands.length != NUMBERS_IN_ONE_OPS ) throw new RuntimeException("");
-
-                Number operand1 = checkNumberFormat(rawOperands[0]);
-                Number operand2 = checkNumberFormat(rawOperands[1]);
-
-                if (operand1.getNumberFormat() != operand2.getNumberFormat()) {
-                    throw new RuntimeException("Numbers should be in same format");
+                if (rawOperands.length != NUMBERS_IN_ONE_OPS) {
+                    throw new RuntimeException("The calculator proceed not more than 2 numbers.");
                 }
 
-                Operation operation = Operation.byOpsSign(ops.opsSign);
+                final Number operand1 = getNumberWithFormat(rawOperands[0]);
+                final Number operand2 = getNumberWithFormat(rawOperands[1]);
 
-                int opsResult = calculate(operand1.getValue(), operand2.getValue(), operation);
+                if (operand1.getNumberFormat() != operand2.getNumberFormat()) {
+                    throw new RuntimeException("Numbers should be in the same format");
+                }
+
+                final Operation operation = Operation.byOpsSign(ops.arithmeticSign);
+
+                final int opsResult = calculate(operand1.getValue(), operand2.getValue(), operation);
 
                 result = new Number(opsResult, operand1.getNumberFormat());
                 break;
@@ -79,20 +86,25 @@ public class Main {
         return result;
     }
 
-    private static Number checkNumberFormat(String number) {
+    private static Number getNumberWithFormat(String rawNumber) {
 
         int numberValue;
+        Number result;
         try {
-            numberValue = Integer.valueOf(number.trim());
-            return new Number(numberValue, NumberFormatType.ARAB);
+            numberValue = Integer.valueOf(rawNumber.trim());
+            if (numberValue > 10 || numberValue < 0) {
+                throw new RuntimeException("Number value should be from 1 to 10 included.");
+            }
+            result = new Number(numberValue, NumberFormatType.ARAB);
         } catch (NumberFormatException e1) {
             try {
-                numberValue = RomanToNumber.romanToDecimal(number.trim());
+                numberValue = RomanToNumber.romanToDecimal(rawNumber.trim());
             }catch (Exception e2){
                 throw new RuntimeException("Incorrect Number Format");
             }
-            return new Number(numberValue, NumberFormatType.ROMAN);
+            result =  new Number(numberValue, NumberFormatType.ROMAN);
         }
+        return result;
     }
 
 }
