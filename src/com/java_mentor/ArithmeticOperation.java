@@ -1,25 +1,24 @@
 package com.java_mentor;
 
 public enum ArithmeticOperation {
-
-    //"+","-","*","/";
     ADD("+","\\+"), SUB("-", "-"), MULT("*","\\*"), DIV("/","/");
 
     CharSequence sign;
     String regExpSplitter;
 
-    ArithmeticOperation(CharSequence opsSign, String regExpSplitter) {
+    ArithmeticOperation(final CharSequence opsSign, final String regExpSplitter) {
         this.sign = opsSign;
         this.regExpSplitter = regExpSplitter;
     }
 
-    static ArithmeticOperation byOpsSign(CharSequence opsSign){
+    static ArithmeticOperation byOpsSign(final CharSequence opsSign){
+
         for (ArithmeticOperation ops: ArithmeticOperation.values()){
-            if (ops.sign == opsSign){
+            if (ops.sign.equals(opsSign)){
                 return ops;
             }
         }
-        return null;
+        throw new IllegalArgumentException("Unexpected Arithmetic Operation '" + opsSign + "'");
     }
 
 }

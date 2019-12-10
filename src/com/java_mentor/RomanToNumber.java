@@ -1,19 +1,20 @@
 package com.java_mentor;
 
-// Program to convert Roman Numerals to Numbers
-
 public class RomanToNumber{
 
-    public static String decimalToRoman(int num) {
+    public static String decimalToRoman(int number) {
+
+        if (number <= 0 || number >= 4000) {
+            throw new CalculatorRuntimeException("Roman Number values supported from 1 to 4000");
+        }
+
         StringBuilder sb = new StringBuilder();
         int times = 0;
-        String[] romans = new String[] { "I", "IV", "V", "IX", "X", "XL", "L",
-                "XC", "C", "CD", "D", "CM", "M" };
-        int[] ints = new int[] { 1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500,
-                900, 1000 };
+        String[] romans = new String[] { "I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M" };
+        int[] ints = new int[] { 1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000 };
         for (int i = ints.length - 1; i >= 0; i--) {
-            times = num / ints[i];
-            num %= ints[i];
+            times = number / ints[i];
+            number %= ints[i];
             while (times > 0) {
                 sb.append(romans[i]);
                 times--;
@@ -22,73 +23,48 @@ public class RomanToNumber{
         return sb.toString();
     }
 
-    // This function returns value of a Roman symbol
-    private static int value(char r){
-        if (r == 'I')
-            return 1;
-        if (r == 'V')
-            return 5;
-        if (r == 'X')
-            return 10;
-        if (r == 'L')
-            return 50;
-        if (r == 'C')
-            return 100;
-        if (r == 'D')
-            return 500;
-        if (r == 'M')
-            return 1000;
-        return -1;
-    }
+    public static int romanToDecimal(final String str) {
+        int result = 0;
 
-    // Finds decimal value of a given romal numeral
-    public static int romanToDecimal(String str)
-    {
-        // Initialize result
-        int res = 0;
+        for (int i=0; i < str.length(); i++) {
+            final int s1 = RomanLiteralSymbol.getValueByLiteral(str.charAt(i));
 
-        for (int i=0; i<str.length(); i++)
-        {
-            // Getting value of symbol s[i]
-            int s1 = value(str.charAt(i));
+            if (i+1 <str.length()) {
+                final int s2 = RomanLiteralSymbol.getValueByLiteral(str.charAt(i+1));
 
-            // Getting value of symbol s[i+1]
-            if (i+1 <str.length())
-            {
-                int s2 = value(str.charAt(i+1));
-
-                // Comparing both values
-                if (s1 >= s2)
-                {
-                    // Value of current symbol is greater
-                    // or equalto the next symbol
-                    res = res + s1;
+                if (s1 >= s2){
+                    result = result + s1;
+                } else{
+                    result = result + s2 - s1;
+                    i++;
                 }
-                else
-                {
-                    res = res + s2 - s1;
-                    i++; // Value of current symbol is
-                    // less than the next symbol
-                }
-            }
-            else
-            {
-                res = res + s1;
+            } else{
+                result = result + s1;
                 i++;
             }
         }
-
-        return res;
+        return result;
     }
 
-    // Driver method
-//    public static void main(String args[])
-//    {
-//        RomanToNumber ob = new RomanToNumber();
-//
-//        // Considering inputs given are valid
-//        String str = "MCMIV";
-//        System.out.println("Integer form of Roman Numeral" +
-//                " is " + ob.romanToDecimal(str));
-//    }
+    public enum RomanLiteralSymbol {
+
+        I(1), V(5), X(10), L(50), C(100), D(500), M(1000);
+
+        int value;
+
+        RomanLiteralSymbol(int value) {
+            this.value = value;
+        }
+
+        static int getValueByLiteral(final char romanLiteralChar){
+
+            for (RomanLiteralSymbol romanLiteral: RomanLiteralSymbol.values()){
+                if (romanLiteral.toString().charAt(0) == romanLiteralChar){
+                    return romanLiteral.value;
+                }
+            }
+            throw new IllegalArgumentException("Not supported Roman literal symbol '" + romanLiteralChar + "'");
+        }
+    }
+
 }

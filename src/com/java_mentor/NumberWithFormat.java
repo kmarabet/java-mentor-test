@@ -1,11 +1,11 @@
 package com.java_mentor;
 
-public class Number {
+public class NumberWithFormat {
 
     private int value;
     private NumberFormatType numberFormat;
 
-    public Number(int value, NumberFormatType numberFormat) {
+    public NumberWithFormat(int value, NumberFormatType numberFormat) {
         this.value = value;
         this.numberFormat = numberFormat;
     }
